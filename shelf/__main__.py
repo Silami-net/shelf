@@ -15,9 +15,16 @@ def main(argv=None):
     gi.require_version("Gdk", "3.0")
     gi.require_version("GdkPixbuf", "2.0")
     gi.require_version("GdkX11", "3.0")
+    import signal
+
+    from gi.repository import GLib
+
     from .app import ShelfApp
 
-    return ShelfApp().run(argv if argv is not None else sys.argv)
+    app = ShelfApp()
+    for sig in (signal.SIGINT, signal.SIGTERM):  # Ctrl+C or a normal kill: quit cleanly
+        GLib.unix_signal_add(GLib.PRIORITY_DEFAULT, sig, lambda: app.quit() or False)
+    return app.run(argv if argv is not None else sys.argv)
 
 
 if __name__ == "__main__":

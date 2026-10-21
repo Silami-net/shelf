@@ -1,5 +1,5 @@
 #!/bin/bash
-# Builds dist/Shelf-full-<version>-x86_64.AppImage: Python, GTK and every library
+# Builds "dist/Self contained/Shelf-full-<version>-x86_64.AppImage": Python, GTK and every library
 # included, built on Ubuntu 20.04 (glibc 2.31) so it runs on most x86_64 Linux
 # systems from about 2018 on, with nothing installed.
 # Runs appimage-builder inside an Ubuntu 20.04 podman container. Its downloads and
@@ -8,7 +8,7 @@ set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 VERSION="$(python3 -c 'import sys; sys.path.insert(0, sys.argv[1]); import shelf; print(shelf.__version__)' "$ROOT")"
-mkdir -p "$ROOT/build/full" "$ROOT/build/podman" "$ROOT/dist"
+mkdir -p "$ROOT/build/full" "$ROOT/build/podman" "$ROOT/dist/Self contained"
 
 # Own storage under build/, ignoring file-ownership changes, so it also works for
 # rootless podman without subordinate user ids (e.g. network logins).
@@ -22,6 +22,7 @@ PODMAN=(podman --root "$ROOT/build/podman/root" --runroot "$ROOT/build/podman/ru
     docker.io/library/ubuntu:20.04 bash -euc '
         # With a single user id, apt cannot drop to its _apt download user.
         echo "APT::Sandbox::User \"root\";" > /etc/apt/apt.conf.d/99no-sandbox
+        echo "Acquire::Retries \"5\";" > /etc/apt/apt.conf.d/99retries  # flaky mirrors
         apt-get update -qq
         apt-get install -y -qq --no-install-recommends python3-pip python3-setuptools \
             patchelf desktop-file-utils libgdk-pixbuf2.0-dev fakeroot squashfs-tools \
@@ -36,7 +37,7 @@ PODMAN=(podman --root "$ROOT/build/podman/root" --runroot "$ROOT/build/podman/ru
         sed -i "s/\"APT::Install-Recommends\": False,/&\n            \"APT::Sandbox::User\": \"root\",/" "$VENV"
         grep -q "APT::Sandbox::User" "$VENV"
         appimage-builder --recipe /src/packaging/appimage-builder.yml --skip-tests
-        mv /src/build/full/Shelf-full-*.AppImage /src/dist/
+        mv /src/build/full/Shelf-full-*.AppImage "/src/dist/Self contained/"
         rm -f /src/build/full/*.zsync  # only useful with update-information
     '
-echo "Built $ROOT/dist/Shelf-full-$VERSION-x86_64.AppImage"
+echo "Built $ROOT/dist/Self contained/Shelf-full-$VERSION-x86_64.AppImage"

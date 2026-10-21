@@ -72,14 +72,6 @@ class SettingsWindow(Gtk.Window):
         self.edge.connect("changed", self._changed)
         self._add(grid, "Screen edge", self.edge)
 
-        self._heading(grid, "Size")
-        self.width = self._spin(cfg.width, 80, 1000, 4)
-        self._add(grid, "Width (pixels)", self.width)
-        self.min_items = self._spin(cfg.min_items, 1, 20, 1)
-        self._add(grid, "Minimum height (items)", self.min_items)
-        self.max_height = self._spin(cfg.max_height_percent, 10, 100, 1)
-        self._add(grid, "Grows up to (% of screen)", self.max_height)
-
         self._heading(grid, "Behaviour")
         self._add(grid, "Show/hide hotkey", self._key_button("hotkey"))
         self.problem = Gtk.Label(xalign=0, wrap=True)
@@ -99,8 +91,6 @@ class SettingsWindow(Gtk.Window):
         self._add(grid, "Undo time (s)", self.undo)
         self.thumbnails = self._switch(cfg.thumbnails)
         self._add(grid, "Thumbnails", self.thumbnails)
-        self.thumb_max = self._spin(cfg.thumbnail_max_mb, 1, 1000000, 64)
-        self._add(grid, "Thumbnail files up to (MB)", self.thumb_max)
         self.tray = self._switch(cfg.tray_icon)
         self._add(grid, "Icon in the top bar", self.tray)
         self.login = Gtk.Switch(active=autostart.is_enabled())
@@ -286,9 +276,6 @@ class SettingsWindow(Gtk.Window):
             self.app.config,
             monitor=self.monitor.get_active_id(),
             edge=self.edge.get_active_id(),
-            width=self.width.get_value_as_int(),
-            min_items=self.min_items.get_value_as_int(),
-            max_height_percent=self.max_height.get_value_as_int(),
             open_on_hover=self.hover.get_active(),
             hover_delay_ms=self.hover_delay.get_value_as_int(),
             empty_timeout_seconds=self.timeout.get_value_as_int(),
@@ -299,7 +286,6 @@ class SettingsWindow(Gtk.Window):
             floating_delay_ms=self.float_delay.get_value_as_int(),
             floating_new_apps=self.new_apps.get_active(),
             thumbnails=self.thumbnails.get_active(),
-            thumbnail_max_mb=self.thumb_max.get_value_as_int(),
             tray_icon=self.tray.get_active(),
             **keys,
         )

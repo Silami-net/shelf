@@ -92,17 +92,17 @@ class Config:
     handle_width: int = 4
     inner_handle_width: int = 14
     open_on_hover: bool = True
-    hover_delay_ms: int = 400
+    hover_delay_ms: int = 200
     empty_timeout_seconds: int = 5
     remove_after_drop: bool = True
     undo_seconds: int = 6
     hotkey: str = "F6"
     thumbnails: bool = True
-    thumbnail_max_mb: int = 2048
+    thumbnail_max_mb: int = 512
     tray_icon: bool = True
     floating_enabled: bool = True
     floating_offset: int = 48
-    floating_delay_ms: int = 150
+    floating_delay_ms: int = 80
     float_hotkey: str = ""
     floating_new_apps: bool = True
     floating_apps: dict = field(default_factory=dict)  # app window class -> on/off

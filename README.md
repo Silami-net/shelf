@@ -36,7 +36,7 @@ and libXfixes.
 ./packaging/build-appimage.sh
 ```
 
-This makes `dist/Shelf-<version>-x86_64.AppImage`, a single file you can copy
+This makes `dist/Rocky Linux 9/Shelf-<version>-x86_64.AppImage`, a single file you can copy
 anywhere (e.g. `~/Applications`) and start by double-clicking or running it. It
 takes the same options as `shelf` (`--toggle`, `--settings`, ...).
 
@@ -51,7 +51,7 @@ other systems it may need `python3-gobject` (or `python3-gi` and
 ./packaging/build-full-appimage.sh
 ```
 
-This makes `dist/Shelf-full-<version>-x86_64.AppImage` (about 46 MB), which
+This makes `dist/Self contained/Shelf-full-<version>-x86_64.AppImage` (about 46 MB), which
 carries its own Python, GTK 3, tray library and C library, built on Ubuntu 20.04
 (glibc 2.31). It runs on 64-bit Intel/AMD Linux desktops from about 2018 on with
 nothing installed, and on newer ones it uses the system's C library. It still
@@ -124,7 +124,7 @@ floating drop panel, **Flush** and **Settings**.
   copy of the shelf when you log in.
 - Images, videos, PDFs and office files get thumbnails from GNOME's own
   thumbnailers, shared with Files in `~/.cache/thumbnails`. They are made one at
-  a time in the background; files over 2 GB (adjustable) keep a plain icon.
+  a time in the background; files over 512 MB keep a plain icon (`thumbnail_max_mb` in `shelf.ini`).
   There is no EXR thumbnailer on this system, so EXRs show a file icon.
 
 ## Settings
@@ -139,8 +139,10 @@ Click the gear icon on the shelf (or run `shelf --settings`). Changes apply
 straight away, including a new hotkey: click the hotkey button and press the
 combination you want.
 
-They are saved in `~/.config/shelf/shelf.ini`, which explains every option. If
-you edit that file by hand, restart the shelf. The contents of the shelf are kept in
+They are saved in `~/.config/shelf/shelf.ini`, which explains every option. A few
+are only there, not in the window: the panel's size (`width`, `min_items`,
+`max_height_percent`), the thumbnail limit and the drop strip widths. If you edit
+that file by hand, restart the shelf. The contents of the shelf are kept in
 `~/.local/share/shelf/state.json`.
 
 The monitor can be `primary`, `follow-mouse`, a connector name (`DP-2`) or
@@ -169,7 +171,7 @@ cd ~/Documents/DEV/shelf && python3 -m unittest discover -s tests -t .
 | Shelf snippet → text field / terminal | text inserted |
 | Link from browser → shelf | link item |
 | Drag shelf item and let go over nothing | item stays on the shelf |
-| Start dragging a file in Nautilus | floating panel appears beside it after ~0.15 s |
+| Start dragging a file in Nautilus | floating panel appears beside it after ~0.08 s |
 | Drop onto the floating panel | item goes on the shelf, shelf appears |
 | Let go elsewhere / press Esc | floating panel disappears |
 | Drag an item out of the shelf | no floating panel |
