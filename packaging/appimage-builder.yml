@@ -1,0 +1,79 @@
+# Recipe for the self-contained AppImage: Python, GTK 3, the tray library and the
+# C library itself all come from Ubuntu 20.04, so it runs without anything installed.
+# Built by packaging/build-full-appimage.sh inside an Ubuntu 20.04 container.
+version: 1
+
+script:
+  - rm -rf "$SHELF_BUILD/AppDir"
+  - mkdir -p "$SHELF_BUILD/AppDir/usr/share/shelf" "$SHELF_BUILD/AppDir/usr/share/icons/hicolor/scalable/apps"
+  - cp -r "$SHELF_SRC/bin" "$SHELF_SRC/shelf" "$SHELF_SRC/data" "$SHELF_BUILD/AppDir/usr/share/shelf/"
+  - find "$SHELF_BUILD/AppDir" -name __pycache__ -prune -exec rm -rf {} +
+  - cp "$SHELF_SRC/data/icons/shelf.svg" "$SHELF_BUILD/AppDir/usr/share/icons/hicolor/scalable/apps/app.shelf.Shelf.svg"
+
+AppDir:
+  path: ./AppDir
+  app_info:
+    id: app.shelf.Shelf
+    name: Shelf
+    icon: app.shelf.Shelf
+    version: !ENV ${VERSION}
+    exec: usr/bin/python3.8
+    exec_args: "$APPDIR/usr/share/shelf/bin/shelf $@"
+
+  apt:
+    arch: amd64
+    allow_unauthenticated: true
+    sources:
+      - sourceline: deb [arch=amd64] http://archive.ubuntu.com/ubuntu/ focal main universe
+      - sourceline: deb [arch=amd64] http://archive.ubuntu.com/ubuntu/ focal-updates main universe
+    include:
+      - python3.8
+      - python3-gi
+      - python3-gi-cairo
+      - gir1.2-gtk-3.0
+      - gir1.2-appindicator3-0.1
+      - gir1.2-gnomedesktop-3.0
+      - libx11-6
+      - libxfixes3
+      # appimage-builder leaves these to the system by default; bundle them so
+      # lean or older desktops without them work too.
+      - libxcb1
+      - libxcb-shm0
+      - libxcb-render0
+      - libwayland-client0
+      - libwayland-cursor0
+      - libwayland-egl1
+      - librsvg2-common
+      - adwaita-icon-theme
+      - shared-mime-info
+    exclude:
+      - humanity-icon-theme
+      - dconf-service
+      - systemd
+      - perl
+      - perl-base
+
+  files:
+    exclude:
+      - usr/share/man
+      - usr/share/doc
+      - usr/share/info
+      - usr/share/lintian
+      - usr/share/locale
+      - usr/lib/python3.8/test
+      - usr/share/icons/Adwaita/cursors
+
+  runtime:
+    env:
+      PYTHONHOME: '${APPDIR}/usr'
+      PYTHONPATH: '${APPDIR}/usr/lib/python3/dist-packages'
+      PYTHONDONTWRITEBYTECODE: '1'
+      # Ubuntu keeps some typelibs (e.g. AppIndicator3) outside the multiarch folder.
+      GI_TYPELIB_PATH: '${APPDIR}/usr/lib/x86_64-linux-gnu/girepository-1.0:${APPDIR}/usr/lib/girepository-1.0'
+      # The desktop's own GTK modules (sound, PackageKit) aren't bundled.
+      GTK_MODULES: ''
+
+AppImage:
+  arch: x86_64
+  update-information: None
+  file_name: !ENV Shelf-full-${VERSION}-x86_64.AppImage
