@@ -21,14 +21,24 @@ def _quote(path):
     return '"' + "".join("\\" + c if c in '"`$\\' else c for c in path) + '"'
 
 
+def launcher():
+    """What to start at login: the AppImage file when running from one.
+
+    An AppImage runs from a temporary mount that is gone after it exits, so
+    paths inside it can't be used; $APPIMAGE is the AppImage file itself.
+    """
+    return os.environ.get("APPIMAGE") or LAUNCHER
+
+
 def desktop_entry():
+    icon = APP_ID if os.environ.get("APPIMAGE") else ICON
     return (
         "[Desktop Entry]\n"
         "Type=Application\n"
         "Name=Shelf\n"
         "Comment=Drop shelf on the edge of the screen\n"
-        f"Exec={_quote(LAUNCHER)}\n"
-        f"Icon={ICON}\n"
+        f"Exec={_quote(launcher())}\n"
+        f"Icon={icon}\n"
         "Terminal=false\n"
         "X-GNOME-Autostart-enabled=true\n"
     )

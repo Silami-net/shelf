@@ -24,6 +24,26 @@ and libXfixes.
 | `shelf --app-settings` | Open the per-app settings of the floating drop panel |
 | `shelf --quit` | Stop the shelf |
 
+### As an AppImage
+
+```bash
+./packaging/build-appimage.sh
+```
+
+This makes `dist/Shelf-<version>-x86_64.AppImage`, a single file you can copy
+anywhere (e.g. `~/Applications`) and start by double-clicking or running it. It
+takes the same options as `shelf` (`--toggle`, `--settings`, ...).
+
+The AppImage holds only the shelf itself and uses the computer's own Python 3 and
+GTK 3, so it stays small. That works out of the box on Rocky/RHEL/Fedora GNOME; on
+other systems it may need `python3-gobject` (or `python3-gi` and
+`gir1.2-gtk-3.0` on Debian/Ubuntu). It tells you if they're missing.
+
+Building needs `appimagetool` in `tools/` (from
+[github.com/AppImage/appimagetool](https://github.com/AppImage/appimagetool/releases)),
+or its path in `$APPIMAGETOOL`. Switch on *Start at Login* from the AppImage
+itself, so the login entry points at the AppImage file.
+
 ## How it behaves
 
 - **F6** opens the empty shelf; F6 or Esc closes it again.

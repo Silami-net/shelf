@@ -1,0 +1,15 @@
+#!/bin/sh
+# Starts the shelf from inside the AppImage, with the system's Python 3 and GTK 3.
+HERE="$(dirname "$(readlink -f "$0")")"
+export PYTHONDONTWRITEBYTECODE=1  # the AppImage is read-only
+
+if ! python3 -c 'import gi; gi.require_version("Gtk", "3.0"); from gi.repository import Gtk' 2>/dev/null; then
+    msg="Shelf needs Python 3 with the GTK 3 bindings (PyGObject).
+Rocky/RHEL/Fedora: sudo dnf install python3-gobject gtk3
+Debian/Ubuntu: sudo apt install python3-gi gir1.2-gtk-3.0"
+    echo "$msg" >&2
+    command -v zenity >/dev/null 2>&1 && zenity --error --title=Shelf --text="$msg" 2>/dev/null
+    exit 1
+fi
+
+exec python3 "$HERE/usr/share/shelf/bin/shelf" "$@"

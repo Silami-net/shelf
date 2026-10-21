@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=Shelf
+Comment=Drop shelf on the edge of the screen
+Exec=shelf
+Icon=app.shelf.Shelf
+Categories=Utility;
+Terminal=false

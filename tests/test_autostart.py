@@ -18,6 +18,15 @@ class AutostartTest(unittest.TestCase):
             self.assertFalse(os.path.exists(path))
             self.assertIsNone(autostart.set_enabled(False, path))
 
+    def test_appimage_launcher(self):
+        os.environ["APPIMAGE"] = "/home/me/Apps/Shelf-x86_64.AppImage"
+        try:
+            entry = autostart.desktop_entry()
+        finally:
+            del os.environ["APPIMAGE"]
+        self.assertIn("Exec=/home/me/Apps/Shelf-x86_64.AppImage\n", entry)
+        self.assertNotIn("/tmp/", entry)
+
     def test_disabled_by_desktop(self):
         with tempfile.TemporaryDirectory() as d:
             path = os.path.join(d, "shelf.desktop")
