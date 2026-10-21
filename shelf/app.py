@@ -14,7 +14,7 @@ import logging
 
 from gi.repository import Gdk, Gio, GLib, Gtk
 
-from . import APP_ID, apps, autostart, config, geometry, items, store, style
+from . import APP_ID, apps, autostart, config, fetch, geometry, items, store, style
 from .floating import HEIGHT as FLOAT_HEIGHT, WIDTH as FLOAT_WIDTH, FloatingDrop
 from .handle import EdgeHandle
 from .panel import ShelfPanel
@@ -77,6 +77,7 @@ class ShelfApp(Gtk.Application):
         self.config = config.load()
         style.install()
         self.items = store.load()
+        fetch.clean([it.path for it in self.items])
 
         self._open_reason = None   # None, "hotkey", "drag" or "hover"
         self._undo_entries = None  # [(index, item)] that Undo would put back

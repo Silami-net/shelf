@@ -74,6 +74,11 @@ def from_uris(uris):
             if u and u.strip() and not u.startswith("#")]
 
 
+def from_paths(paths):
+    from gi.repository import Gio
+    return [Item("file", Gio.File.new_for_path(p).get_uri()) for p in paths]
+
+
 def from_text(text):
     """A dropped/pasted string: one link becomes a link item, anything else a snippet."""
     stripped = (text or "").strip()

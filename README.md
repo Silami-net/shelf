@@ -93,6 +93,11 @@ floating drop panel, **Flush** and **Settings**.
   not listed" decides what new apps do. Rules are saved under `[apps]` in
   `shelf.ini` by the app's window class, e.g. `Nuke = off`.
 - Resting the pointer on the screen edge also opens it (`open_on_hover`).
+- A picture dragged out of a web browser lands on the shelf as the picture
+  itself (with its real file name), not as a link: the shelf takes the image
+  data the browser hands over, or downloads the picture. These copies live in
+  `~/.local/share/shelf/downloads` and are cleaned up a day after they leave
+  the shelf. Dragging a plain link still gives a link.
 - Drag items out to drop them anywhere. Once dropped, they leave the shelf.
   Ctrl/Shift-click to select several and drag them together.
 - Drag the shelf by the empty space in its header to move it: let go and it
