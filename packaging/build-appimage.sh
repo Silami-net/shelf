@@ -24,5 +24,7 @@ cp "$ROOT/data/icons/shelf.svg" "$APPDIR/app.shelf.Shelf.svg"
 ln -s app.shelf.Shelf.svg "$APPDIR/.DirIcon"
 
 OUT="$ROOT/dist/Shelf-$VERSION-x86_64.AppImage"
-ARCH=x86_64 VERSION="$VERSION" "$TOOL" --no-appstream "$APPDIR" "$OUT"
+# Build next to it and swap it in, so a copy that is running keeps working.
+ARCH=x86_64 VERSION="$VERSION" "$TOOL" --no-appstream "$APPDIR" "$OUT.new"
+mv -f "$OUT.new" "$OUT"
 echo "Built $OUT"
