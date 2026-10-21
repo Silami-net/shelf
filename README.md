@@ -45,24 +45,6 @@ GTK 3, so it stays small. That works out of the box on Rocky/RHEL/Fedora GNOME; 
 other systems it may need `python3-gobject` (or `python3-gi` and
 `gir1.2-gtk-3.0` on Debian/Ubuntu). It tells you if they're missing.
 
-### As a self-contained AppImage
-
-```bash
-./packaging/build-full-appimage.sh
-```
-
-This makes `dist/Self contained/Shelf-full-<version>-x86_64.AppImage` (about 46 MB), which
-carries its own Python, GTK 3, tray library and C library, built on Ubuntu 20.04
-(glibc 2.31). It runs on 64-bit Intel/AMD Linux desktops from about 2018 on with
-nothing installed, and on newer ones it uses the system's C library. It still
-needs an X11 session, or XWayland for X11 apps, like the light version.
-
-The build runs [appimage-builder](https://appimage-builder.readthedocs.io/)
-inside an Ubuntu 20.04 podman container, so it needs podman and downloads the
-Ubuntu packages on the first run. Everything it downloads stays in `build/`.
-
-### Building the light AppImage
-
 Building needs `appimagetool` in `tools/` (from
 [github.com/AppImage/appimagetool](https://github.com/AppImage/appimagetool/releases)),
 or its path in `$APPIMAGETOOL`. Switch on *Start at Login* from the AppImage

@@ -11,7 +11,6 @@ import mimetypes
 import os
 import re
 import shutil
-import ssl
 import threading
 import time
 import urllib.parse
@@ -27,10 +26,6 @@ DOWNLOAD_DIR = os.path.join(DATA_DIR, "downloads")
 MAX_BYTES = 200 * 1024 * 1024
 TIMEOUT = 30
 KEEP_SECONDS = 24 * 3600
-# The system's certificate store, which also holds any company certificates. A
-# bundled Python (the self-contained AppImage) doesn't know where it lives.
-CA_BUNDLES = ("/etc/pki/tls/certs/ca-bundle.crt", "/etc/ssl/certs/ca-certificates.crt",
-              "/etc/ssl/ca-bundle.pem", "/etc/ssl/cert.pem")
 EXTENSIONS = {"image/jpeg": ".jpg", "image/png": ".png", "image/gif": ".gif",
               "image/webp": ".webp", "image/svg+xml": ".svg", "image/bmp": ".bmp",
               "image/tiff": ".tif", "image/avif": ".avif", "image/x-icon": ".ico"}
@@ -112,16 +107,6 @@ def save(data, name, folder=None):
     return path
 
 
-def _ssl_context():
-    context = ssl.create_default_context()
-    if not context.get_ca_certs():
-        for bundle in CA_BUNDLES:
-            if os.path.exists(bundle):
-                context.load_verify_locations(bundle)
-                break
-    return context
-
-
 def _download(url):
     if url.startswith("data:"):
         data, content_type = decode_data_url(url)
@@ -129,7 +114,7 @@ def _download(url):
         request = urllib.request.Request(url, headers={
             "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) Shelf",
             "Accept": "image/*,*/*;q=0.5"})
-        with urllib.request.urlopen(request, timeout=TIMEOUT, context=_ssl_context()) as resp:
+        with urllib.request.urlopen(request, timeout=TIMEOUT) as resp:
             content_type = resp.headers.get_content_type()
             data = resp.read(MAX_BYTES + 1)
         if len(data) > MAX_BYTES:
