@@ -32,6 +32,7 @@ class Tray:
         menu.append(self.count)
         show = self._item(menu, "Show/Hide Empty Shelf", app.toggle)
         self.floating = self._check(menu, "Floating Drop Panel", app.set_floating_enabled)
+        self._item(menu, "Add Clipboard", app.add_clipboard)
         self.flush = self._item(menu, "Flush", app.flush)
         menu.append(Gtk.SeparatorMenuItem())
         self._item(menu, "Settings…", app.show_settings)

@@ -116,7 +116,8 @@ class ShelfPanel(Gtk.Window):
     """Calls back into the app; never changes the item list itself."""
 
     def __init__(self, edge, on_drop_in, on_remove, on_dragged_out, on_flush, on_undo,
-                 on_settings, on_move_start, on_move_end, on_float_toggle, on_float_menu):
+                 on_settings, on_move_start, on_move_end, on_float_toggle, on_float_menu,
+                 on_paste):
         super().__init__(type=Gtk.WindowType.POPUP)
         style.make_overlay(self)
         self.get_style_context().add_class("shelf-window")
@@ -150,6 +151,9 @@ class ShelfPanel(Gtk.Window):
         self.float_button.connect(
             "button-press-event",
             lambda b, e: e.button == Gdk.BUTTON_SECONDARY and (on_float_menu(e) or True))
+        paste_button = self._icon_button("edit-paste-symbolic",
+                                         "Add the clipboard to the shelf", on_paste)
+        header.pack_start(paste_button, False, False, 0)
         header.pack_start(self.count, True, True, 0)
         header.pack_end(settings_button, False, False, 0)
         header.pack_end(self.float_button, False, False, 0)
@@ -195,8 +199,9 @@ class ShelfPanel(Gtk.Window):
         self.undo_label = Gtk.Label(justify=Gtk.Justification.CENTER, wrap=True,
                                     max_width_chars=1)
         self.undo_label.get_style_context().add_class("shelf-dim")
-        undo_button = Gtk.Button(label="Undo")
+        self.undo_button = undo_button = Gtk.Button(label="Undo")
         undo_button.connect("clicked", lambda b: on_undo())
+        self._notice_timer = None
         undo_box.pack_start(self.undo_label, False, False, 0)
         undo_box.pack_start(undo_button, False, False, 0)
         self.undo = Gtk.Revealer(transition_type=Gtk.RevealerTransitionType.NONE)
@@ -263,11 +268,34 @@ class ShelfPanel(Gtk.Window):
         self.empty.set_text(f"{text}\n\n{extra}" if extra else text)
 
     def show_undo(self, message):
+        self._end_notice()
         self.undo_label.set_text(message)
+        self.undo_button.show()
         self.undo.set_reveal_child(True)
 
     def hide_undo(self):
         self.undo.set_reveal_child(False)
+
+    def show_notice(self, message, seconds=2.5):
+        """A short message in the bottom bar, without an Undo button."""
+        if self.undo.get_reveal_child() and self.undo_button.get_visible():
+            return  # an Undo is on offer; don't hide it
+        self._end_notice()
+        self.undo_label.set_text(message)
+        self.undo_button.hide()
+        self.undo.set_reveal_child(True)
+        self._notice_timer = GLib.timeout_add(int(seconds * 1000), self._notice_done)
+
+    def _notice_done(self):
+        self._notice_timer = None
+        self.undo.set_reveal_child(False)
+        self.undo_button.show()
+        return False
+
+    def _end_notice(self):
+        if self._notice_timer:
+            GLib.source_remove(self._notice_timer)
+            self._notice_timer = None
 
     def set_drop_highlight(self, on):
         ctx = self.frame.get_style_context()

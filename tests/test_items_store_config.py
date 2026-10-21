@@ -39,6 +39,13 @@ class ItemsTest(unittest.TestCase):
         self.assertEqual([i.value for i in added], ["file:///b"])
         self.assertEqual(len(shelf), 2)
 
+    def test_copied_files(self):
+        got = items.from_copied_files("copy\nfile:///mnt/a%20b.exr\nfile:///mnt/c/\n")
+        self.assertEqual([i.path for i in got], ["/mnt/a b.exr", "/mnt/c/"])
+        self.assertEqual(len(items.from_copied_files("cut\nfile:///x")), 1)
+        self.assertEqual(len(items.from_copied_files("file:///x\nfile:///y")), 2)
+        self.assertEqual(items.from_copied_files(""), [])
+
     def test_as_text(self):
         self.assertEqual(Item("file", "file:///a%20b").as_text(), "/a b")
         self.assertEqual(Item("text", "hi").as_text(), "hi")

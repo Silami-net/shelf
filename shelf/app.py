@@ -11,6 +11,7 @@ An empty shelf that is left alone fades away after empty_timeout_seconds.
 """
 import dataclasses
 import logging
+import time
 
 from gi.repository import Gdk, Gio, GLib, Gtk
 
@@ -58,6 +59,8 @@ class ShelfApp(Gtk.Application):
                              "Take everything off the shelf", None)
         self.add_main_option("add", 0, GLib.OptionFlags.NONE, GLib.OptionArg.STRING_ARRAY,
                              "Put a file or folder on the shelf (repeatable)", "PATH")
+        self.add_main_option("add-clipboard", 0, GLib.OptionFlags.NONE, GLib.OptionArg.NONE,
+                             "Put what is on the clipboard on the shelf", None)
         self.add_main_option("add-text", 0, GLib.OptionFlags.NONE, GLib.OptionArg.STRING_ARRAY,
                              "Put a text snippet on the shelf (repeatable)", "TEXT")
         self.add_main_option("toggle-float", 0, GLib.OptionFlags.NONE, GLib.OptionArg.NONE,
@@ -101,7 +104,8 @@ class ShelfApp(Gtk.Application):
         self.panel = ShelfPanel(self.config.edge, self.add_items, self.remove_items,
                                 self._dragged_out, self.flush, self.undo, self.show_settings,
                                 self._move_started, self._move_ended,
-                                self.set_floating_enabled, self._float_menu)
+                                self.set_floating_enabled, self._float_menu,
+                                self.add_clipboard)
         self.panel.set_floating(self.config.floating_enabled)
         self.panel.thumbnail_limit = self._thumbnail_limit()
         self.handle = EdgeHandle(self.add_items, self._handle_dragged_over)
@@ -142,6 +146,8 @@ class ShelfApp(Gtk.Application):
             new += items.from_text(text)
         if new:
             self.add_items(new)
+        if opts.get("add-clipboard"):
+            self.add_clipboard()
         if opts.get("toggle"):
             self.toggle()
         if opts.get("toggle-float"):
@@ -270,12 +276,49 @@ class ShelfApp(Gtk.Application):
     # --- the item list -----------------------------------------------------
 
     def add_items(self, new):
-        if not items.merge(self.items, new):
-            return
+        """Put items on the shelf; returns the ones that weren't on it already."""
+        added = items.merge(self.items, new)
+        if not added:
+            return added
         self._open_reason = None  # from now on it stays up because it has items
         self._release_escape()
         self._cancel_fade()
         self._items_changed()
+        return added
+
+    def add_clipboard(self):
+        """Put what is on the clipboard on the shelf: files, a picture or text."""
+        new = self._clipboard_items()
+        if not new:
+            self.panel.show_notice("Clipboard is empty")
+        elif not self.add_items(new):
+            self.panel.show_notice("Already on the shelf")
+
+    @staticmethod
+    def _clipboard_items():
+        clip = Gtk.Clipboard.get(Gdk.SELECTION_CLIPBOARD)
+        ok, atoms = clip.wait_for_targets()
+        offered = {a.name() for a in atoms} if ok and atoms else set()
+        if "x-special/gnome-copied-files" in offered:
+            data = clip.wait_for_contents(Gdk.Atom.intern("x-special/gnome-copied-files", False))
+            new = items.from_copied_files((data.get_data() or b"").decode("utf-8", "replace")
+                                          if data else "")
+            if new:
+                return new
+        if clip.wait_is_uris_available():
+            new = items.from_uris(clip.wait_for_uris() or [])
+            if new:
+                return new
+        if clip.wait_is_image_available():
+            pixbuf = clip.wait_for_image()
+            if pixbuf is not None:
+                ok, data = pixbuf.save_to_bufferv("png", [], [])
+                if ok:
+                    name = time.strftime("clipboard-%Y-%m-%d-%H%M%S.png")
+                    return items.from_paths([fetch.save(data, name)])
+        if clip.wait_is_text_available():
+            return items.from_text(clip.wait_for_text())
+        return []
 
     def remove_items(self, ids, message=None):
         ids = set(ids)

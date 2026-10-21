@@ -175,7 +175,7 @@ def thumbnail_ghost(cr, path, x, y):
 # --- the screenshots -------------------------------------------------------------
 
 def make_panel(cfg):
-    panel = ShelfPanel(cfg.edge, *[lambda *a: None] * 10)
+    panel = ShelfPanel(cfg.edge, *[lambda *a: None] * 11)
     panel.thumbnail_limit = 1 << 30
     panel.set_floating(cfg.floating_enabled)
     panel.set_empty_hint(f"{cfg.hotkey} or Esc to close")

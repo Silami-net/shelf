@@ -79,6 +79,17 @@ def from_paths(paths):
     return [Item("file", Gio.File.new_for_path(p).get_uri()) for p in paths]
 
 
+def from_copied_files(text):
+    """Files copied in a GNOME file manager: "copy" or "cut", then one URI per line.
+
+    Either way the shelf only keeps references, so a "cut" never moves anything.
+    """
+    lines = (text or "").splitlines()
+    if lines and lines[0].strip() in ("copy", "cut"):
+        lines = lines[1:]
+    return from_uris(lines)
+
+
 def from_text(text):
     """A dropped/pasted string: one link becomes a link item, anything else a snippet."""
     stripped = (text or "").strip()

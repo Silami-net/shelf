@@ -25,6 +25,7 @@ and libXfixes.
 | `shelf --flush` | Take everything off the shelf |
 | `shelf --add PATH` | Put a file or folder on the shelf (repeatable) |
 | `shelf --add-text TEXT` | Put a text snippet on the shelf (repeatable) |
+| `shelf --add-clipboard` | Put what is on the clipboard on the shelf |
 | `shelf --toggle-float` | Turn the floating drop panel on or off |
 | `shelf --settings` | Open the settings window |
 | `shelf --app-settings` | Open the per-app settings of the floating drop panel |
@@ -53,10 +54,15 @@ itself, so the login entry points at the AppImage file.
 ## How it behaves
 
 The shelf sits against the screen edge. Items show a thumbnail (or their icon)
-with the name underneath. The header holds the item count and the buttons for the
-floating drop panel and **Settings**; **Flush** sits in the bottom-right corner.
+with the name underneath. The header holds the **paste** button (top left), the
+item count and the buttons for the floating drop panel and **Settings**; **Flush**
+sits in the bottom-right corner.
 
 - **F6** opens the empty shelf; F6 or Esc closes it again.
+- The **paste** button puts the clipboard on the shelf: files copied in Files
+  (kept by reference; even "cut" never moves them), a copied picture (saved as
+  a PNG, like browser pictures) or text. Also in the top-bar menu, and as
+  `shelf --add-clipboard` for a keyboard shortcut of your own.
 - While the shelf holds anything it stays visible, on top of other windows.
 - An empty shelf that is left alone (pointer elsewhere, no drag going on) fades
   away after 5 seconds.
@@ -98,7 +104,7 @@ floating drop panel and **Settings**; **Flush** sits in the bottom-right corner.
 ## Top bar icon, start at login, thumbnails
 
 - The shelf's icon in the top bar shows how many items it holds. Its menu has
-  Show/Hide, Floating Drop Panel, Flush, Settings, **Start at Login** and Quit.
+  Show/Hide, Floating Drop Panel, Add Clipboard, Flush, Settings, **Start at Login** and Quit.
   Middle-click the icon to show/hide the empty shelf. (Needs the AppIndicator
   extension, which is on here; turn the icon off in Settings if you don't want it.)
 - **Start at Login** (tray menu or Settings) adds or removes
