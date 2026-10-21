@@ -4,6 +4,12 @@ A drop shelf for the edge of the screen (GNOME on X11). Park files,
 folders, links and text snippets on it, then drag them on to wherever they need
 to go.
 
+<p>
+  <img src="docs/images/shelf.png" alt="The shelf on the right screen edge, holding three renders with thumbnails, a folder, a text snippet and a link" height="420">
+  &nbsp;
+  <img src="docs/images/shelf-empty.png" alt="The empty shelf, opened with F6, showing a dashed 'Drop here' area" height="300">
+</p>
+
 Needs only what Rocky/RHEL 9 already ships: Python 3, PyGObject with GTK 3, libX11
 and libXfixes.
 
@@ -46,12 +52,18 @@ itself, so the login entry points at the AppImage file.
 
 ## How it behaves
 
+The shelf sits against the screen edge. Items show a thumbnail (or their icon)
+with the name underneath; the header holds the item count and the buttons for the
+floating drop panel, **Flush** and **Settings**.
+
 - **F6** opens the empty shelf; F6 or Esc closes it again.
 - While the shelf holds anything it stays visible, on top of other windows.
 - An empty shelf that is left alone (pointer elsewhere, no drag going on) fades
   away after 5 seconds.
 - Start dragging anything and a blue strip appears on the shelf's screen edge.
   Drag onto it and the shelf slides out to drop into.
+<img src="docs/images/floating-panel.png" alt="The floating drop panel next to where a drag began, highlighted while a file is dragged onto it" width="420">
+
 - **Floating drop panel:** when you start dragging something, a small "Drop on
   shelf" target appears just below-right of where the drag began (flipped to
   stay on screen) and disappears when the drag ends. Turn it on/off with the
@@ -67,12 +79,16 @@ itself, so the login entry points at the AppImage file.
   Ctrl/Shift-click to select several and drag them together.
 - Drag the shelf by the empty space in its header to move it: let go and it
   snaps to the nearest side of the monitor you dropped it on.
+<img src="docs/images/shelf-flushed.png" alt="The shelf right after a flush, offering Undo" align="right" height="300">
+
 - The eraser icon (**Flush**) empties the shelf. After a flush or drop, **Undo** stays up for a
   few seconds.
 - Right-click an item: Open, Show in Folder, Copy, Remove. Double-click opens
   a file or link, or copies a snippet.
 - Files are kept by reference only. The shelf never moves, renames or deletes
   them, and only offers *copy* or *link* when you drag them out.
+
+<br clear="right">
 
 ## Top bar icon, start at login, thumbnails
 
@@ -90,6 +106,12 @@ itself, so the login entry points at the AppImage file.
 
 ## Settings
 
+<p>
+  <img src="docs/images/settings.png" alt="The settings window" width="400">
+  &nbsp;
+  <img src="docs/images/settings-apps.png" alt="The per-app settings sub panel, with Nuke switched off" width="400">
+</p>
+
 Click the gear icon on the shelf (or run `shelf --settings`). Changes apply
 straight away, including a new hotkey: click the hotkey button and press the
 combination you want.
@@ -103,6 +125,9 @@ a number. Sizes are worked out from whatever monitors are connected, and the
 shelf moves itself when monitors are plugged in, unplugged or change resolution.
 
 ## Tests
+
+The README screenshots are drawn from the real widgets, off screen, with sample
+files: `python3 docs/screenshots.py` regenerates `docs/images/`.
 
 ```bash
 cd ~/Documents/DEV/shelf && python3 -m unittest discover -s tests -t .
