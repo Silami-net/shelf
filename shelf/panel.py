@@ -137,7 +137,7 @@ class ShelfPanel(Gtk.Window):
 
         header = Gtk.Box(spacing=4)
         header.get_style_context().add_class("shelf-header")
-        self.count = Gtk.Label(xalign=0)
+        self.count = Gtk.Label(xalign=1)
         self.count.get_style_context().add_class("shelf-dim")
         self.flush_button = self._icon_button("edit-clear-all-symbolic",
                                               "Flush: take everything off the shelf", on_flush)
@@ -154,7 +154,7 @@ class ShelfPanel(Gtk.Window):
         paste_button = self._icon_button("edit-paste-symbolic",
                                          "Add the clipboard to the shelf", on_paste)
         header.pack_start(paste_button, False, False, 0)
-        header.pack_start(self.count, True, True, 0)
+        header.pack_start(Gtk.Box(), True, True, 0)  # the empty grip space
         header.pack_end(settings_button, False, False, 0)
         header.pack_end(self.float_button, False, False, 0)
         # The header's empty space is the grip for moving the shelf to another side.
@@ -207,10 +207,11 @@ class ShelfPanel(Gtk.Window):
         self.undo = Gtk.Revealer(transition_type=Gtk.RevealerTransitionType.NONE)
         self.undo.add(undo_box)
 
-        # Flush sits in the bottom-right corner, away from the header's other buttons.
+        # Flush and the item count sit in the bottom-right corner.
         self.footer = Gtk.Box()
         self.footer.get_style_context().add_class("shelf-footer")
         self.footer.pack_end(self.flush_button, False, False, 0)
+        self.footer.pack_end(self.count, False, False, 6)  # count right beside Flush
         self.frame.pack_end(self.footer, False, False, 0)
         self.frame.pack_end(self.undo, False, False, 0)
 

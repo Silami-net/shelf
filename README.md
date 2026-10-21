@@ -54,9 +54,9 @@ itself, so the login entry points at the AppImage file.
 ## How it behaves
 
 The shelf sits against the screen edge. Items show a thumbnail (or their icon)
-with the name underneath. The header holds the **paste** button (top left), the
-item count and the buttons for the floating drop panel and **Settings**; **Flush**
-sits in the bottom-right corner.
+with the name underneath. The header holds the **paste** button (top left) and
+the buttons for the floating drop panel and **Settings**; the item count and
+**Flush** sit in the bottom-right corner.
 
 - **F6** opens the empty shelf; F6 or Esc closes it again.
 - The **paste** button puts the clipboard on the shelf: files copied in Files
