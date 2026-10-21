@@ -53,8 +53,8 @@ itself, so the login entry points at the AppImage file.
 ## How it behaves
 
 The shelf sits against the screen edge. Items show a thumbnail (or their icon)
-with the name underneath; the header holds the item count and the buttons for the
-floating drop panel, **Flush** and **Settings**.
+with the name underneath. The header holds the item count and the buttons for the
+floating drop panel and **Settings**; **Flush** sits in the bottom-right corner.
 
 - **F6** opens the empty shelf; F6 or Esc closes it again.
 - While the shelf holds anything it stays visible, on top of other windows.
@@ -86,7 +86,7 @@ floating drop panel, **Flush** and **Settings**.
   snaps to the nearest side of the monitor you dropped it on.
 <img src="docs/images/shelf-flushed.png" alt="The shelf right after a flush, offering Undo" align="right" height="300">
 
-- The eraser icon (**Flush**) empties the shelf. After a flush or drop, **Undo** stays up for a
+- The eraser icon (**Flush**, bottom right) empties the shelf. After a flush or drop, **Undo** stays up for a
   few seconds.
 - Right-click an item: Open, Show in Folder, Copy, Remove. Double-click opens
   a file or link, or copies a snippet.

@@ -17,8 +17,8 @@ def breakable(name):
     """Let long file names wrap after _ and - and before the extension, not mid-word."""
     name = re.sub(r"([_\-])", r"\1" + ZWSP, name)
     return re.sub(r"\.(?=[^.]+$)", ZWSP + ".", name)
-# Space taken by everything except the item list (header, padding, undo bar).
-CHROME_HEIGHT = 120
+# Space taken by everything except the item list (header, footer, padding, undo bar).
+CHROME_HEIGHT = 150
 
 
 class ItemRow(Gtk.ListBoxRow):
@@ -152,7 +152,6 @@ class ShelfPanel(Gtk.Window):
             lambda b, e: e.button == Gdk.BUTTON_SECONDARY and (on_float_menu(e) or True))
         header.pack_start(self.count, True, True, 0)
         header.pack_end(settings_button, False, False, 0)
-        header.pack_end(self.flush_button, False, False, 0)
         header.pack_end(self.float_button, False, False, 0)
         # The header's empty space is the grip for moving the shelf to another side.
         self.header = Gtk.EventBox(visible_window=False)
@@ -202,6 +201,12 @@ class ShelfPanel(Gtk.Window):
         undo_box.pack_start(undo_button, False, False, 0)
         self.undo = Gtk.Revealer(transition_type=Gtk.RevealerTransitionType.NONE)
         self.undo.add(undo_box)
+
+        # Flush sits in the bottom-right corner, away from the header's other buttons.
+        self.footer = Gtk.Box()
+        self.footer.get_style_context().add_class("shelf-footer")
+        self.footer.pack_end(self.flush_button, False, False, 0)
+        self.frame.pack_end(self.footer, False, False, 0)
         self.frame.pack_end(self.undo, False, False, 0)
 
         # Never shown: a sample row in the panel's styling, to measure the minimum height.
@@ -274,7 +279,8 @@ class ShelfPanel(Gtk.Window):
         self.frame.set_size_request(width, -1)
         content = self.frame.get_preferred_height_for_width(width)[1]
         row = self._probe.get_children()[0].get_preferred_height_for_width(width)[1]
-        chrome = self.header.get_preferred_height_for_width(width)[1] + 8
+        chrome = (self.header.get_preferred_height_for_width(width)[1]
+                  + self.footer.get_preferred_height_for_width(width)[1] + 8)
         if self.undo.get_reveal_child():
             chrome += self.undo.get_preferred_height_for_width(width)[1]
         return max(content, chrome + min_items * row)

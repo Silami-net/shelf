@@ -45,6 +45,7 @@ CSS = b"""
   padding: 16px 6px; margin: 4px 8px 10px 8px; font-size: smaller;
   border: 2px dashed rgba(255, 255, 255, 0.18); border-radius: 10px;
 }
+.shelf-footer { padding: 2px 6px 6px 6px; }
 .shelf-undo { padding: 8px 8px 10px 8px; font-size: smaller; border-top: 1px solid rgba(255, 255, 255, 0.08); }
 
 .shelf.shelf-float { border-radius: 14px; border-width: 1px; padding: 8px 6px; font-size: smaller; }
